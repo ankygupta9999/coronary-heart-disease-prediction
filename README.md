@@ -25,3 +25,5 @@ Demonstrate Data Mining process with following activities:
 Important Points to be considered
 •	Missing Data may be represented by either NAs, Blanks or values such as -999/-99 etc. Please check for various possibilities. 
 •	Results can be varying from team to team. But, you should be able to justify your result. 
+
+Thanks
