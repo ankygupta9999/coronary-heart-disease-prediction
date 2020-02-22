@@ -52,7 +52,9 @@ def Analysis_Crosstab(df_cat, targetcol, colToAnalyze):
     
 # Univariate Analysis
 def distplot_numericdata(df_numerical):
-    """This plots the distribution of data for numerical features"""
+    """This plots the distribution of data for numerical features
+       If column is passed, then only for that col, it generates the plot.
+    """
     import os
     import random
     sns.set(color_codes=True)
@@ -69,6 +71,7 @@ def distplot_numericdata(df_numerical):
         #Take the Numerical data under 5-95 % percentile to remove the outliers.
         df_percentile = df_numerical.loc[(df_numerical[col] < np.percentile(df_numerical[col],95)) & (df_numerical[col] > np.percentile(df_numerical[col],5)), [col]]          
         dplot = sns.distplot(df_percentile[col].dropna(), color=random.choice(colors))
+        #dplot = sns.distplot(df_numerical[col].dropna(), color=random.choice(colors))
         dplot.set_title(col)
         dplot.set_xlabel(col)
         dplot.set_ylabel("density")
@@ -76,7 +79,23 @@ def distplot_numericdata(df_numerical):
         plt.show()
         plt.clf()
         plt.close()    
-    
+
+        
+# Bivariate Analysis
+def bivariate_analysis(df_numerical, col, plottype):
+    """ This plots the columsn with Target column and draw a regression line.
+        If column is passed, then only for that col, it generates the plot.
+    """
+    cols=[]
+    if col:
+        cols.append(col)
+    else:
+        cols = df_numerical.columns
+    for i, col in enumerate(cols):
+        jplot = sns.jointplot(x=df_numerical[col], y=df_numerical['Target'], kind=plottype).set_axis_labels(col,'Target')
+        plt.show()
+        plt.clf()
+        plt.close()
     
 from scipy import stats
 from sklearn.feature_selection import chi2
