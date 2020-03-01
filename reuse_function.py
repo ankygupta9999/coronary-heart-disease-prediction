@@ -39,7 +39,7 @@ def check_missing_data(df, plot):
         
 # Program for bi variate anaysis of categorical features.
 def Analysis_CountPlot(df_cat, colToanalyze, hueColumn):  
-    plt.subplots(figsize=(15,6))
+    plt.subplots(figsize=(7,7))
     ax = sns.countplot(x= colToanalyze, hue=hueColumn, data=df_cat)
     ax.set_title('Bi-Variate Analysis for :' + colToanalyze)
     plt.show()
@@ -69,6 +69,7 @@ def distplot_numericdata(df_numerical):
     for i, col in enumerate(df_numerical.columns):
         #print(col)
         #Take the Numerical data under 5-95 % percentile to remove the outliers.
+        df_numerical[col] = df_numerical[col].dropna()
         df_percentile = df_numerical.loc[(df_numerical[col] < np.percentile(df_numerical[col],95)) & (df_numerical[col] > np.percentile(df_numerical[col],5)), [col]]          
         dplot = sns.distplot(df_percentile[col].dropna(), color=random.choice(colors))
         #dplot = sns.distplot(df_numerical[col].dropna(), color=random.choice(colors))
@@ -134,7 +135,7 @@ def GetRecordsHavingMoreThanOnePercent(df, ColToAnalyze, indexes):
 def GetFeatureRecordsPercentage(df_categorical, ColToAnalyze):
 #     df_count_records = df_categorical.groupby([ColToAnalyze]).agg({ColToAnalyze : 'count' }).sort_values(by=ColToAnalyze,ascending=False)
 #     df_count_records['PERCENTAGE'] =(df_count_records[ColToAnalyze]/len(df))*100
-    df_count_records = df_categorical.groupby([ColToAnalyze]).count().Status.to_frame('count').reset_index().sort_values(by='count',ascending=False)
+    df_count_records = df_categorical.groupby([ColToAnalyze]).count().Target.to_frame('count').reset_index().sort_values(by='count',ascending=False)
     df_count_records['PERCENTAGE'] =(df_count_records['count']/len(df_categorical))*100
     return df_count_records
 
@@ -142,7 +143,7 @@ def GetFeatureRecordsPercentage(df_categorical, ColToAnalyze):
 def GetFeatureRecordsPercentage(df, ColToAnalyze):
 #     df_count_records = df_categorical.groupby([ColToAnalyze]).agg({ColToAnalyze : 'count' }).sort_values(by=ColToAnalyze,ascending=False)
 #     df_count_records['PERCENTAGE'] =(df_count_records[ColToAnalyze]/len(df))*100
-    df_count_records = df.groupby([ColToAnalyze]).count().Status.to_frame('count').reset_index().sort_values(by='count',ascending=False)
+    df_count_records = df.groupby([ColToAnalyze]).count().Target.to_frame('count').reset_index().sort_values(by='count',ascending=False)
     df_count_records['PERCENTAGE'] =(df_count_records['count']/len(df))*100
     return df_count_records
 
@@ -199,6 +200,8 @@ def MultiVariateAnalysisForGivenPercentVolume(df_categorical,ColToAnalyze, hueCo
 
 def BiVariateAnalysisForGreaterThanOnePercentVolume(df_categorical,ColToAnalyze, hueCol, percentage = 0):
 
+    print ('                                                                                   ')
+    print ('                                                                                   ')
     print ('===================================================================================')
     print ('====== GENERATING STATS FOR ' + ColToAnalyze + ': ================')
     print ('===================================================================================')
@@ -215,10 +218,16 @@ def BiVariateAnalysisForGreaterThanOnePercentVolume(df_categorical,ColToAnalyze,
     
     df_gt_1_percent = GetRecordsHavingMoreThanOnePercent(df_categorical, ColToAnalyze, Percent_index)
 
+    print ('====== CROSSTAB STATS FOR ' + ColToAnalyze + ': ================')
+    print('---------------------------------------\r')
+    Analysis_Crosstab(df_gt_1_percent, hueCol, ColToAnalyze)
+    
     # Adding Chi2 results
+    print ('====== CHI2 STATS For ' + ColToAnalyze + ': ================')
+    print('---------------------------------------\r')
     Analysis_chi2(df_cat=df_gt_1_percent, targetcol=hueCol, colToAnalyze=ColToAnalyze)
     
     Analysis_CountPlot(df_gt_1_percent,ColToAnalyze, hueCol)
 
-    return Analysis_Crosstab(df_gt_1_percent, hueCol, ColToAnalyze)
+#     return Analysis_Crosstab(df_gt_1_percent, hueCol, ColToAnalyze)
 
